@@ -45,5 +45,10 @@ Logout: Navigate to /login to log out.
 Contributing
 Contributions are welcome! Feel free to fork the repository and create pull requests.
 
+## Login Details:
+Email: admin@gmail.com
+Password: 123
+
+
 License
 This project is licensed under the MIT License.
