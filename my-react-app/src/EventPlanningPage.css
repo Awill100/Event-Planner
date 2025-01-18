@@ -1,0 +1,227 @@
+/* EventPlanningPage Styles */
+.event-planning-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  padding: 20px;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+.event-planning-form {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+}
+
+.event-planning-form:hover {
+  transform: scale(1.02); /* Slightly zoom the form on hover for effect */
+}
+
+.form-title {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.input-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.input-group label {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #333;
+  transition: color 0.3s ease-in-out;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+.input-group input:focus {
+  border-color: #3498db;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: #aaa;
+}
+
+.submit-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 30px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+}
+
+.submit-btn:focus {
+  outline: none;
+}
+
+.weather-info {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.weather {
+  font-weight: 600;
+  color: #2ecc71;
+}
+
+.weather-message {
+  font-size: 16px;
+  color: #e74c3c;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.event-result {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.event-result h3 {
+  font-size: 24px;
+  color: #3498db;
+}
+
+.event-result p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.reset-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 20px;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.reset-btn:hover {
+  background-color: #c0392b;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .event-planning-form {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 28px;
+  }
+
+  .submit-btn {
+    font-size: 16px;
+  }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 480px) {
+  .event-planning-form {
+    padding: 15px;
+    width: 95%;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .submit-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* Dropdown styling */
+.input-group select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+  color: #333;
+  appearance: none; /* Remove default browser styling */
+  cursor: pointer;
+}
+
+/* Add custom dropdown arrow */
+.input-group {
+  position: relative;
+}
+
+.input-group select::after {
+  content: '▼'; /* Unicode for down arrow */
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #aaa;
+  pointer-events: none;
+}
+
+.input-group select:focus {
+  border-color: #3498db;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+  outline: none;
+}
+
+/* Option styling (for clarity within the dropdown) */
+.input-group select option {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .input-group select {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-group select {
+    font-size: 12px;
+  }
+}
