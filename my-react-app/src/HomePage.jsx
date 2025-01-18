@@ -18,7 +18,7 @@ const HomePage = () => {
   return (
     <div className="home-container">
       <div className="home-content">
-        <h1 className="title">Welcome to Our App</h1>
+        <h1 className="title">Welcome to Our Event Management System</h1>
         <p className="description">Your gateway to secure and easy access management.</p>
         
         <div className="buttons">

@@ -13,19 +13,27 @@ const EventPlanningPage = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("");
   const [cities, setCities] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-  const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API Key
+  const apiKey = "342d4b5c8d4c4e8aa91155720250201"; // Replace with your Weather API key
 
-  // Hardcoded list of countries and their respective cities
   const countryCityData = {
-    USA: ["New York", "Los Angeles", "Chicago", "Houston", "Miami"],
-    India: ["Delhi", "Mumbai", "Bangalore", "Hyderabad", "Kolkata"],
-    Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-    UK: ["London", "Manchester", "Birmingham", "Liverpool", "Leeds"],
-    Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+    USA: [
+      { name: "New York", lat: 40.7128, lon: -74.006 },
+      { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
+      { name: "Chicago", lat: 41.8781, lon: -87.6298 },
+      { name: "Houston", lat: 29.7604, lon: -95.3698 },
+      { name: "Miami", lat: 25.7617, lon: -80.1918 },
+    ],
+    India: [
+      { name: "Delhi", lat: 28.7041, lon: 77.1025 },
+      { name: "Mumbai", lat: 19.076, lon: 72.8777 },
+      { name: "Bangalore", lat: 12.9716, lon: 77.5946 },
+      { name: "Hyderabad", lat: 17.385, lon: 78.4867 },
+      { name: "Kolkata", lat: 22.5726, lon: 88.3639 },
+    ],
   };
 
-  // List of events
   const events = [
     "Conference",
     "Wedding",
@@ -35,17 +43,16 @@ const EventPlanningPage = () => {
     "Sports Event",
   ];
 
-  // Get weather forecast for the selected city
-  const getWeather = async (city, country) => {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${apiKey}&units=metric`;
+  const getWeather = async (lat, lon) => {
+    const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
 
     try {
       const response = await fetch(url);
       const data = await response.json();
-      const temp = data.main.temp;
-      const description = data.weather[0].description;
+      const temp = data.current.temp_c;
+      const condition = data.current.condition.text;
 
-      setWeather(`Temperature: ${temp}°C, Condition: ${description}`);
+      setWeather(`Temperature: ${temp}°C, Condition: ${condition}`);
       setWeatherMessage(
         temp > 20
           ? "Good weather for an event!"
@@ -56,21 +63,27 @@ const EventPlanningPage = () => {
     }
   };
 
-  // Handle country selection
   useEffect(() => {
     if (selectedCountry) {
       setCities(countryCityData[selectedCountry] || []);
-      setSelectedCity(""); // Reset the city selection
+      setSelectedCity("");
     }
   }, [selectedCountry]);
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (eventDate && eventTime && selectedCity && selectedCountry) {
-      getWeather(selectedCity, selectedCountry);
+    if (eventDate && eventTime && selectedCity) {
+      const selectedCityData = cities.find(
+        (city) => city.name === selectedCity
+      );
+      if (selectedCityData) {
+        getWeather(selectedCityData.lat, selectedCityData.lon);
+      }
+      setShowModal(true); // Show the modal with results
     }
   };
+
+  const closeModal = () => setShowModal(false);
 
   return (
     <div className="event-planning-container">
@@ -144,8 +157,8 @@ const EventPlanningPage = () => {
             >
               <option value="">Select City</option>
               {cities.map((city, index) => (
-                <option key={index} value={city}>
-                  {city}
+                <option key={index} value={city.name}>
+                  {city.name}
                 </option>
               ))}
             </select>
@@ -155,12 +168,40 @@ const EventPlanningPage = () => {
             Plan Event
           </button>
         </form>
-
-        <div className="weather-info">
-          {weather && <p className="weather">{weather}</p>}
-          {weatherMessage && <p className="weather-message">{weatherMessage}</p>}
-        </div>
       </div>
+
+      {/* Modal for displaying results */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Event Details</h3>
+            <p>
+              <strong>Event Type:</strong> {selectedEvent}
+            </p>
+            <p>
+              <strong>Event Date:</strong> {eventDate?.toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Event Time:</strong> {eventTime?.toLocaleTimeString()}
+            </p>
+            <p>
+              <strong>City:</strong> {selectedCity}
+            </p>
+            <p>
+              <strong>Country:</strong> {selectedCountry}
+            </p>
+            <p>
+              <strong>Weather:</strong> {weather}
+            </p>
+            <p>
+              <strong>Weather Suggestion:</strong> {weatherMessage}
+            </p>
+            <button className="reset-btn" onClick={closeModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
