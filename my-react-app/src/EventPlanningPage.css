@@ -1,15 +1,149 @@
-/* EventPlanningPage Styles */
 .event-planning-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  background: linear-gradient(135deg, #74ebd5, #9face6), url('https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXZlbnQlMjBwbGFubmluZ3xlbnwwfHwwfHx8MA%3D%3D');
   padding: 20px;
   width: 100vw;
+  height: 100vh;
   box-sizing: border-box;
+  position: relative;
+  backdrop-filter: blur(12px); /* Apply a blur effect */
+}
+/* Adding a light blur overlay */
+.event-planning-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7); /* Light white overlay */
+  backdrop-filter: blur(8px); /* Apply the blur effect */
+  z-index: -1; /* Ensure the content is above the overlay */
 }
 
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px 40px;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.logo img {
+  width: 120px;
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+  transform: translateY(-3px);
+}
+
+.weather-info {
+  margin-top: 80px;
+  text-align: center;
+  font-size: 18px;
+  max-width: 370px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.weather-info h3 {
+  font-size: 20px;
+  color: #3498db;
+}
+
+.weather-info p {
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.weather-message {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e74c3c;
+}
+
+/* Event Selection Section */
+.eventWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.event-selection {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.event-selection select {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.open-form-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 30px;
+  width: 100%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.open-form-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.open-form-btn:hover:enabled {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+}
+
+.eventDetails {
+  font-size: 18px;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+/* Event Planning Form */
 .event-planning-form {
   background: rgba(255, 255, 255, 0.95);
   padding: 40px;
@@ -21,7 +155,7 @@
 }
 
 .event-planning-form:hover {
-  transform: scale(1.02); /* Slightly zoom the form on hover for effect */
+  transform: scale(1.02); /* Slight zoom on hover */
 }
 
 .form-title {
@@ -32,6 +166,7 @@
   font-weight: 700;
 }
 
+/* Input and Select Elements */
 .input-group {
   margin-bottom: 24px;
   position: relative;
@@ -43,28 +178,42 @@
   margin-bottom: 8px;
   display: block;
   color: #333;
-  transition: color 0.3s ease-in-out;
+  text-align: left;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 14px;
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  transition: all 0.3s ease;
   background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus {
   border-color: #3498db;
   background-color: #ffffff;
   box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
   outline: none;
 }
 
-.input-group input::placeholder {
+.input-group select {
+  cursor: pointer;
+}
+
+.input-group select::after {
+  content: '▼'; /* Unicode for down arrow */
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
   color: #aaa;
+  pointer-events: none;
 }
 
 .submit-btn {
@@ -88,39 +237,6 @@
   outline: none;
 }
 
-.weather-info {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 18px;
-}
-
-.weather {
-  font-weight: 600;
-  color: #2ecc71;
-}
-
-.weather-message {
-  font-size: 16px;
-  color: #e74c3c;
-  font-weight: 500;
-  margin-top: 10px;
-}
-
-.event-result {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.event-result h3 {
-  font-size: 24px;
-  color: #3498db;
-}
-
-.event-result p {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
 .reset-btn {
   background-color: #e74c3c;
   color: white;
@@ -138,95 +254,7 @@
   transform: translateY(-3px);
 }
 
-@media (max-width: 768px) {
-  .event-planning-form {
-    width: 90%;
-    padding: 20px;
-  }
-
-  .form-title {
-    font-size: 28px;
-  }
-
-  .submit-btn {
-    font-size: 16px;
-  }
-}
-
-/* Mobile-specific adjustments */
-@media (max-width: 480px) {
-  .event-planning-form {
-    padding: 15px;
-    width: 95%;
-  }
-
-  .form-title {
-    font-size: 24px;
-  }
-
-  .submit-btn {
-    font-size: 14px;
-    padding: 12px;
-  }
-}
-
-/* Dropdown styling */
-.input-group select {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  background-color: #f9f9f9;
-  color: #333;
-  appearance: none; /* Remove default browser styling */
-  cursor: pointer;
-}
-
-/* Add custom dropdown arrow */
-.input-group {
-  position: relative;
-}
-
-.input-group select::after {
-  content: '▼'; /* Unicode for down arrow */
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  color: #aaa;
-  pointer-events: none;
-}
-
-.input-group select:focus {
-  border-color: #3498db;
-  background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
-  outline: none;
-}
-
-/* Option styling (for clarity within the dropdown) */
-.input-group select option {
-  font-size: 16px;
-  color: #333;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .input-group select {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .input-group select {
-    font-size: 12px;
-  }
-}
-
-
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -245,7 +273,7 @@
   padding: 30px;
   border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 800px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
@@ -261,19 +289,73 @@
   font-size: 18px;
 }
 
-.reset-btn {
-  background-color: #e74c3c;
+.modal button {
+  background-color: #3498db;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
+  font-size: 18px;
   transition: background-color 0.3s, transform 0.2s ease;
 }
 
-.reset-btn:hover {
-  background-color: #c0392b;
+.modal button:hover {
+  background-color: #2980b9;
   transform: translateY(-3px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .event-planning-form {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 28px;
+  }
+
+  .submit-btn {
+    font-size: 16px;
+  }
+
+  .eventWrapper {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-planning-form {
+    padding: 15px;
+    width: 95%;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .submit-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* Dropdown Styling */
+.input-group select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #333;
+  appearance: none; /* Remove default browser styling */
+  cursor: pointer;
+}
+
+/* Option styling (for clarity within the dropdown) */
+.input-group select option {
+  font-size: 16px;
+  color: #333;
 }

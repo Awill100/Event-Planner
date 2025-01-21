@@ -1,45 +1,42 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignUpPage.css';
 
 const SignUpPage = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [signUpStatus, setSignUpStatus] = useState('');
+  const navigate = useNavigate();
 
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const users = JSON.parse(localStorage.getItem('users')) || [];
 
-  // Validate form fields
+  // Validate the inputs
   const validate = () => {
     const validationErrors = {};
-    if (!formData.username.trim()) {
+
+    if (!username.trim()) {
       validationErrors.username = 'Username is required';
+    } else if (username.length < 3) {
+      validationErrors.username = 'Username must be at least 3 characters';
+    } else if (users.find(user => user.username === username)) {
+      validationErrors.username = 'Username already exists';
     }
-    if (!formData.email.trim()) {
-      validationErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      validationErrors.email = 'Invalid email format';
-    }
-    if (!formData.password) {
+
+    if (!password) {
       validationErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (password.length < 6) {
       validationErrors.password = 'Password must be at least 6 characters';
     }
-    if (formData.password !== formData.confirmPassword) {
+
+    if (password !== confirmPassword) {
       validationErrors.confirmPassword = 'Passwords do not match';
     }
+
     return validationErrors;
   };
 
-  // Handle form submission
+  // Handle the sign up submission
   const handleSignUp = (e) => {
     e.preventDefault();
 
@@ -50,9 +47,15 @@ const SignUpPage = () => {
       return;
     }
 
-    // Proceed with sign-up logic (this could be a backend call to store user data)
-    setSignUpStatus(`Welcome, ${formData.username}! Your account has been created.`);
-    setErrors({});
+    // Add the new user to the users array
+    const newUser = { username, password };
+    users.push(newUser);
+
+    // Store the updated users array in localStorage
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // Redirect to the login page after successful sign-up
+    navigate('/');
   };
 
   return (
@@ -64,35 +67,20 @@ const SignUpPage = () => {
           <label className="label">Username</label>
           <input
             type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="input"
-            placeholder="Enter your username"
+            placeholder="Enter a username"
           />
           {errors.username && <p className="error-message">{errors.username}</p>}
-        </div>
-
-        <div className="input-group">
-          <label className="label">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="input"
-            placeholder="Enter your email"
-          />
-          {errors.email && <p className="error-message">{errors.email}</p>}
         </div>
 
         <div className="input-group">
           <label className="label">Password</label>
           <input
             type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="input"
             placeholder="Enter your password"
           />
@@ -103,9 +91,8 @@ const SignUpPage = () => {
           <label className="label">Confirm Password</label>
           <input
             type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="input"
             placeholder="Confirm your password"
           />
@@ -115,8 +102,6 @@ const SignUpPage = () => {
         <button type="submit" className="button">
           Sign Up
         </button>
-
-        {signUpStatus && <p className="status-message">{signUpStatus}</p>}
       </form>
     </div>
   );

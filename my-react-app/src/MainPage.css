@@ -125,3 +125,45 @@
     }
   }
   
+
+
+  /* Header Styles */
+.header {
+  padding: 15px 20px;
+  color: white;
+  width: 100%;
+
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 18px;
+  box-sizing: border-box;
+}
+
+.logo-img {
+  width: 50px; /* Adjust according to your logo size */
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background-color: #f44336; /* Logout button background color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Add some margin for other content */
+.event-planning-container {
+  margin-top: 30px;
+  flex-direction: column;
+}
+
+/* Other existing styles for your app */
