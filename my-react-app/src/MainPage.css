@@ -162,7 +162,7 @@
 
 /* Add some margin for other content */
 .event-planning-container {
-  margin-top: 30px;
+  /* margin-top: 30px; */
   flex-direction: column;
 }
 
