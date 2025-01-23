@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #74ebd5, #9face6), url('https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXZlbnQlMjBwbGFubmluZ3xlbnwwfHwwfHx8MA%3D%3D');
+  /* background: linear-gradient(135deg, #74ebd5, #9face6), url('https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXZlbnQlMjBwbGFubmluZ3xlbnwwfHwwfHx8MA%3D%3D'); */
   padding: 20px;
   width: 100vw;
   height: 100vh;
@@ -14,7 +14,7 @@
 }
 /* Adding a light blur overlay */
 .event-planning-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -206,7 +206,7 @@
 }
 
 .input-group select::after {
-  content: '▼'; /* Unicode for down arrow */
+  content: "▼"; /* Unicode for down arrow */
   position: absolute;
   right: 14px;
   top: 50%;

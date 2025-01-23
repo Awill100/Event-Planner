@@ -1,43 +1,36 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth"; // Firebase method for signing in
+import "./LoginPage.css";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [loginStatus, setLoginStatus] = useState('');
+  const [loginStatus, setLoginStatus] = useState("");
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
-
-  const navigate = useNavigate();  // Hook to navigate after login
-
-  // Predefined users (for example)
-  const users = JSON.parse(localStorage.getItem('users')) || [
-    { username: 'admin', password: 'admin123' },
-    { username: 'user1', password: 'password1' },
-    { username: 'user2', password: 'password2' },
-  ];
+  const navigate = useNavigate(); // Hook to navigate after login
 
   // Validate input fields
   const validate = () => {
     const validationErrors = {};
-    if (!username.trim()) {
-      validationErrors.username = 'Username is required';
-    } else if (username.length < 3) {
-      validationErrors.username = 'Username must be at least 3 characters';
+
+    if (!email.trim()) {
+      validationErrors.email = "Email is required";
     }
 
     if (!password) {
-      validationErrors.password = 'Password is required';
+      validationErrors.password = "Password is required";
     } else if (password.length < 6) {
-      validationErrors.password = 'Password must be at least 6 characters';
+      validationErrors.password = "Password must be at least 6 characters";
     }
-    
+
     return validationErrors;
   };
 
   // Handle login submission
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     // Validate inputs
@@ -47,18 +40,15 @@ const LoginPage = () => {
       return;
     }
 
-    // Check credentials
-    const userExists = users.find(
-      (user) => user.username === username && user.password === password
-    );
-
-    if (userExists) {
-      setLoginStatus(`Welcome, ${username}!`);
+    try {
+      // Sign in the user with Firebase Authentication
+      await signInWithEmailAndPassword(auth, email, password);
       setErrors({});
+      setLoginStatus("");
       // Redirect to MainPage after successful login
-      navigate('/main');
-    } else {
-      setLoginStatus('Invalid username or password');
+      navigate("/main");
+    } catch (error) {
+      setLoginStatus("Invalid email or password");
     }
   };
 
@@ -69,7 +59,7 @@ const LoginPage = () => {
 
   // Navigate to Sign Up page
   const goToSignUp = () => {
-    navigate('/signup');
+    navigate("/signup");
   };
 
   return (
@@ -78,22 +68,22 @@ const LoginPage = () => {
         <h2 className="title">Login</h2>
 
         <div className="input-group">
-          <label className="label">Username</label>
+          <label className="label">Email</label>
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="input"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
-          {errors.username && <p className="error-message">{errors.username}</p>}
+          {errors.email && <p className="error-message">{errors.email}</p>}
         </div>
 
         <div className="input-group">
           <label className="label">Password</label>
           <div className="password-wrapper">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input"
@@ -104,10 +94,12 @@ const LoginPage = () => {
               className="show-password-btn"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? 'Hide' : 'Show'}
+              {showPassword ? "Hide" : "Show"}
             </button>
           </div>
-          {errors.password && <p className="error-message">{errors.password}</p>}
+          {errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
         </div>
 
         <button type="submit" className="button">

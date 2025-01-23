@@ -1,43 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './SignUpPage.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebaseConfig"; // Import the auth object from firebaseConfig
+import { createUserWithEmailAndPassword } from "firebase/auth"; // Firebase auth method for creating users
+import "./SignUpPage.css";
 
 const SignUpPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
-  const users = JSON.parse(localStorage.getItem('users')) || [];
 
   // Validate the inputs
   const validate = () => {
     const validationErrors = {};
 
-    if (!username.trim()) {
-      validationErrors.username = 'Username is required';
-    } else if (username.length < 3) {
-      validationErrors.username = 'Username must be at least 3 characters';
-    } else if (users.find(user => user.username === username)) {
-      validationErrors.username = 'Username already exists';
+    if (!email.trim()) {
+      validationErrors.email = "Email is required";
     }
 
     if (!password) {
-      validationErrors.password = 'Password is required';
+      validationErrors.password = "Password is required";
     } else if (password.length < 6) {
-      validationErrors.password = 'Password must be at least 6 characters';
+      validationErrors.password = "Password must be at least 6 characters";
     }
 
     if (password !== confirmPassword) {
-      validationErrors.confirmPassword = 'Passwords do not match';
+      validationErrors.confirmPassword = "Passwords do not match";
     }
 
     return validationErrors;
   };
 
-  // Handle the sign up submission
-  const handleSignUp = (e) => {
+  // Handle the sign-up submission
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     // Validate inputs
@@ -47,15 +43,17 @@ const SignUpPage = () => {
       return;
     }
 
-    // Add the new user to the users array
-    const newUser = { username, password };
-    users.push(newUser);
-
-    // Store the updated users array in localStorage
-    localStorage.setItem('users', JSON.stringify(users));
-
-    // Redirect to the login page after successful sign-up
-    navigate('/');
+    try {
+      console.log("Trying to sign up with email:", email); // Debugging line
+      // Create the user with Firebase Authentication
+      await createUserWithEmailAndPassword(auth, email, password);
+      setErrors({});
+      // Redirect to the login page after successful sign-up
+      navigate("/");
+    } catch (error) {
+      console.error("Firebase Error:", error); // Debugging line
+      setErrors({ firebase: error.message });
+    }
   };
 
   return (
@@ -64,15 +62,15 @@ const SignUpPage = () => {
         <h2 className="title">Sign Up</h2>
 
         <div className="input-group">
-          <label className="label">Username</label>
+          <label className="label">Email</label>
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="input"
-            placeholder="Enter a username"
+            placeholder="Enter your email"
           />
-          {errors.username && <p className="error-message">{errors.username}</p>}
+          {errors.email && <p className="error-message">{errors.email}</p>}
         </div>
 
         <div className="input-group">
@@ -84,7 +82,9 @@ const SignUpPage = () => {
             className="input"
             placeholder="Enter your password"
           />
-          {errors.password && <p className="error-message">{errors.password}</p>}
+          {errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
         </div>
 
         <div className="input-group">
@@ -96,8 +96,12 @@ const SignUpPage = () => {
             className="input"
             placeholder="Confirm your password"
           />
-          {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
+          {errors.confirmPassword && (
+            <p className="error-message">{errors.confirmPassword}</p>
+          )}
         </div>
+
+        {errors.firebase && <p className="error-message">{errors.firebase}</p>}
 
         <button type="submit" className="button">
           Sign Up

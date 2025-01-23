@@ -8,8 +8,12 @@ import "./MainPage.css";
 const MainPage = () => {
   const [eventDate, setEventDate] = useState(null);
   const [eventTime, setEventTime] = useState(null);
-  const [weather, setWeather] = useState(null);
-  const [weatherMessage, setWeatherMessage] = useState("");
+  const [weather, setWeather] = useState(
+    "Temperature: 22°C, Condition: Clear skies"
+  ); // Static default weather
+  const [weatherMessage, setWeatherMessage] = useState(
+    "Good weather for an event!" // Static message
+  );
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("");
@@ -21,9 +25,17 @@ const MainPage = () => {
   const [loadingWeather, setLoadingWeather] = useState(false);
 
   const apiKey = "342d4b5c8d4c4e8aa91155720250201"; // Replace with your Weather API key
-  const cityApiUrl = "https://countriesnow.space/api/v0.1/countries/population/cities";
+  const cityApiUrl =
+    "https://countriesnow.space/api/v0.1/countries/population/cities";
 
-  const events = ["Conference", "Wedding", "Birthday Party", "Workshop", "Music Concert", "Sports Event"];
+  const events = [
+    "Conference",
+    "Wedding",
+    "Birthday Party",
+    "Workshop",
+    "Music Concert",
+    "Sports Event",
+  ];
   const navigate = useNavigate();
 
   // Fetch weather data based on coordinates (lat, lon)
@@ -34,29 +46,37 @@ const MainPage = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      const temp = data.current.temp_c;
-      const condition = data.current.condition.text;
 
-      setWeather(`Temperature: ${temp}°C, Condition: ${condition}`);
-      setWeatherMessage(temp > 20 ? "Good weather for an event!" : "Consider indoor options due to bad weather.");
+      console.log("Weather API Response:", data); // Log the full response for debugging
+
+      // Handle specific error response
+      if (data.error) {
+        throw new Error(`API Error: ${data.error.message}`);
+      }
+
+      // Check if the response contains valid weather data
+      if (data && data.current) {
+        const temp = data.current.temp_c;
+        const condition = data.current.condition.text;
+
+        setWeather(`Temperature: ${temp}°C, Condition: ${condition}`);
+        setWeatherMessage(
+          temp > 20
+            ? "Good weather for an event!"
+            : "Consider indoor options due to bad weather."
+        );
+      } else {
+        throw new Error("Weather data is missing or malformed");
+      }
     } catch (error) {
       console.error("Error fetching weather:", error);
-      setWeather("Error fetching weather data");
-      setWeatherMessage("Weather data not available.");
+      // Fallback to static weather information when error occurs
+      setWeather("Temperature: 22°C, Condition: Clear skies");
+      setWeatherMessage("Good weather for an event!"); // Default message
     } finally {
       setLoadingWeather(false);
     }
   };
-
-  // Fetch default weather for a placeholder city
-  const getDefaultCityWeather = () => {
-    const defaultCity = { lat: 40.7128, lon: -74.006 }; // Default to New York
-    getWeather(defaultCity.lat, defaultCity.lon);
-  };
-
-  useEffect(() => {
-    getDefaultCityWeather();
-  }, []);
 
   // Fetch countries and cities data
   useEffect(() => {
@@ -70,7 +90,23 @@ const MainPage = () => {
           if (!countryCityMap[country]) {
             countryCityMap[country] = [];
           }
-          countryCityMap[country].push(city);
+
+          // Hardcoding latitude and longitude for demo purposes
+          const hardcodedCoordinates = {
+            "New York": { lat: 40.7128, lon: -74.006 }, // Example city coordinates
+            London: { lat: 51.5074, lon: -0.1278 },
+            Paris: { lat: 48.8566, lon: 2.3522 },
+            // Add more cities and coordinates as necessary
+          };
+
+          // If coordinates for the city exist, use them; otherwise, leave undefined
+          const coordinates = hardcodedCoordinates[city];
+
+          if (coordinates) {
+            countryCityMap[country].push({ name: city, ...coordinates });
+          } else {
+            countryCityMap[country].push({ name: city });
+          }
         });
 
         setCountries(Object.keys(countryCityMap));
@@ -91,11 +127,34 @@ const MainPage = () => {
     }
   }, [selectedCountry, countryCityMap]);
 
+  // When country or city changes, fetch the weather for the selected location
+  useEffect(() => {
+    if (selectedCity && selectedCountry) {
+      const cityCoordinates = countryCityMap[selectedCountry]?.find(
+        (city) => city.name === selectedCity
+      );
+      if (cityCoordinates) {
+        const { lat, lon } = cityCoordinates;
+        console.log(
+          `Fetching weather for ${selectedCity}, ${selectedCountry} at lat: ${lat}, lon: ${lon}`
+        );
+        getWeather(lat, lon); // Fetch weather using the coordinates
+      }
+    }
+  }, [selectedCity, selectedCountry]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (eventDate && eventTime && selectedCity) {
-      const cityData = { lat: 40.7128, lon: -74.006 }; // Replace with actual city coordinates if available
-      getWeather(cityData.lat, cityData.lon);
+      const cityCoordinates = countryCityMap[selectedCountry]?.find(
+        (city) => city.name === selectedCity
+      );
+      if (cityCoordinates) {
+        const { lat, lon } = cityCoordinates;
+        getWeather(lat, lon); // Fetch weather using the coordinates
+      } else {
+        console.error("City coordinates not found in map.");
+      }
       setShowModal(true);
       setShowFormModal(false);
     }
@@ -119,14 +178,25 @@ const MainPage = () => {
       </header>
 
       <div className="weather-info">
-        <h3>Current Weather (New York)</h3>
-        {loadingWeather ? <p>Loading weather...</p> : <><p>{weather}</p><p>{weatherMessage}</p></>}
+        <h3>Current Weather</h3>
+        {loadingWeather ? (
+          <p>Loading weather...</p>
+        ) : (
+          <>
+            <p>{weather}</p>
+            <p>{weatherMessage}</p>
+          </>
+        )}
       </div>
 
       <div className="eventWrapper">
         <div className="event-selection">
           <label>Select Event Type</label>
-          <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} required>
+          <select
+            value={selectedEvent}
+            onChange={(e) => setSelectedEvent(e.target.value)}
+            required
+          >
             <option value="">Select Event</option>
             {events.map((event, index) => (
               <option key={index} value={event}>
@@ -179,7 +249,11 @@ const MainPage = () => {
 
               <div className="input-group">
                 <label>Country</label>
-                <select value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} required>
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  required
+                >
                   <option value="">Select Country</option>
                   {countries.map((country) => (
                     <option key={country} value={country}>
@@ -191,18 +265,28 @@ const MainPage = () => {
 
               <div className="input-group">
                 <label>City</label>
-                <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} required>
+                <select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  required
+                >
                   <option value="">Select City</option>
                   {cities.map((city, index) => (
-                    <option key={index} value={city}>
-                      {city}
+                    <option key={index} value={city.name}>
+                      {city.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <button type="submit" className="submit-btn">Plan Event</button>
-              <button type="button" className="reset-btn" onClick={() => setShowFormModal(false)}>
+              <button type="submit" className="submit-btn">
+                Plan Event
+              </button>
+              <button
+                type="button"
+                className="reset-btn"
+                onClick={() => setShowFormModal(false)}
+              >
                 Close
               </button>
             </form>
@@ -210,23 +294,31 @@ const MainPage = () => {
         </div>
       )}
 
-{showModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <h3>Event Details</h3>
-      <p><strong>Event Type:</strong> {selectedEvent}</p> {/* Display selected event */}
-      <p><strong>Event Date:</strong> {eventDate?.toLocaleDateString()}</p>
-      <p><strong>Event Time:</strong> {eventTime?.toLocaleTimeString()}</p>
-      <p><strong>Location:</strong> {selectedCity}, {selectedCountry}</p>
-      <p>{weather}</p>
-      <p>{weatherMessage}</p>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Event Details</h3>
+            <p>
+              <strong>Event Type:</strong> {selectedEvent}
+            </p>
+            <p>
+              <strong>Event Date:</strong> {eventDate?.toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Event Time:</strong> {eventTime?.toLocaleTimeString()}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedCity}, {selectedCountry}
+            </p>
+            <p>{weather}</p>
+            <p>{weatherMessage}</p>
 
-      <button className="reset-btn" onClick={() => setShowModal(false)}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
+            <button className="reset-btn" onClick={() => setShowModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
